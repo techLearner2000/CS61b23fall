@@ -8,7 +8,7 @@ import org.junit.jupiter.api.TestMethodOrder;
 import static com.google.common.truth.Truth.assertThat;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class ArithmeticTest {
+public class    ArithmeticTest {
 
     /** Performs a few arbitrary tests to see if the product method is
      * correct */
