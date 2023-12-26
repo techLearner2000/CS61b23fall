@@ -62,9 +62,12 @@ public class UnionFind {
         }
 
         // Path compression
-        if (data[v] < 0) {
+        // base case
+        if (parent(v) < 0) {
             return v;
         }
+        // Operates on each piece of data
+        // recursive case
         data[v] = find(data[v]);
         return data[v];
     }
