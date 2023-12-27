@@ -75,14 +75,15 @@ public class RedBlackTree<T extends Comparable<T>> {
         // TODO: YOUR CODE HERE
         if (node == null || node.left == null) return node;
 
-        node.isBlack = false;
-        node.left.isBlack = true;
+        node.isBlack = !node.isBlack;
+        node.left.isBlack = !node.left.isBlack;
 
         RBTreeNode sub = node.left.right;
-        node.left.right = node;
+        RBTreeNode newRoot = node.left;
+        newRoot.right = node;
         node.left = sub;
 
-        return node.left;
+        return newRoot;
     }
 
     /* Rotates the given node to the left. Returns the new root node of
@@ -92,14 +93,21 @@ public class RedBlackTree<T extends Comparable<T>> {
         // TODO: YOUR CODE HERE
         if (node == null || node.right == null) return node;
 
-        node.isBlack = false;
-        node.right.isBlack = true;
+//        if (!(isRed(node) && isRed(node.right))) {
+//            node.isBlack = !node.isBlack;
+//            node.right.isBlack = !node.right.isBlack;
+//        }
+
+        boolean temp = node.isBlack;
+        node.isBlack = node.right.isBlack;
+        node.right.isBlack = temp;
 
         RBTreeNode sub = node.right.left;
+        RBTreeNode newRoot = node.right;
+        newRoot.left = node;
         node.right = sub;
-        node.right.left = node;
 
-        return node.right;
+        return newRoot;
     }
 
     public void insert(T item) {
@@ -129,9 +137,12 @@ public class RedBlackTree<T extends Comparable<T>> {
         // TODO: YOUR CODE HERE
 
         // Rotate left operation
-        if (isRed(node.right)) {
+        if (isRed(node.right) && !isRed(node.left)) {
             node = rotateLeft(node);
         }
+//        if (isRed(node.left) && isRed(node.left.left)) {
+//            node = rotateLeft(node.left);
+//        }
 
         // Rotate right operation
         if (isRed(node.left) && isRed(node.left.left)) {
