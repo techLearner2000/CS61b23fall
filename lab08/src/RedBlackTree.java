@@ -63,6 +63,9 @@ public class RedBlackTree<T extends Comparable<T>> {
        and right children. */
     void flipColors(RBTreeNode<T> node) {
         // TODO: YOUR CODE HERE
+        node.isBlack = !node.isBlack;
+        node.left.isBlack = !node.left.isBlack;
+        node.right.isBlack = !node.right.isBlack;
     }
 
     /* Rotates the given node to the right. Returns the new root node of
@@ -70,7 +73,16 @@ public class RedBlackTree<T extends Comparable<T>> {
        of the new root and the old root!*/
     RBTreeNode<T> rotateRight(RBTreeNode<T> node) {
         // TODO: YOUR CODE HERE
-        return null;
+        if (node == null || node.left == null) return node;
+
+        node.isBlack = false;
+        node.left.isBlack = true;
+
+        RBTreeNode sub = node.left.right;
+        node.left.right = node;
+        node.left = sub;
+
+        return node.left;
     }
 
     /* Rotates the given node to the left. Returns the new root node of
@@ -78,7 +90,16 @@ public class RedBlackTree<T extends Comparable<T>> {
        of the new root and the old root! */
     RBTreeNode<T> rotateLeft(RBTreeNode<T> node) {
         // TODO: YOUR CODE HERE
-        return null;
+        if (node == null || node.right == null) return node;
+
+        node.isBlack = false;
+        node.right.isBlack = true;
+
+        RBTreeNode sub = node.right.left;
+        node.right = sub;
+        node.right.left = node;
+
+        return node.right;
     }
 
     public void insert(T item) {
@@ -108,12 +129,21 @@ public class RedBlackTree<T extends Comparable<T>> {
         // TODO: YOUR CODE HERE
 
         // Rotate left operation
+        if (isRed(node.right)) {
+            node = rotateLeft(node);
+        }
 
         // Rotate right operation
+        if (isRed(node.left) && isRed(node.left.left)) {
+            node = rotateRight(node);
+        }
 
         // Color flip
+        if (isRed(node.left) && isRed(node.right)) {
+            flipColors(node);
+        }
 
-        return null; //fix this return statement
+        return node; //fix this return statement
     }
 
     /* Returns whether the given node is red. Null nodes (children of leaf
