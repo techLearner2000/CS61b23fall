@@ -50,11 +50,12 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
      * @param loadFactor maximum load factor
      */
     public MyHashMap(int initialCapacity, double loadFactor) {
-        buckets = new Collection[initialCapacity];
+        this.capacity = initialCapacity;
+        this.loadFactor = loadFactor;
+        buckets = new Collection[capacity];
         for (int i = 0; i < buckets.length; i++) {
             buckets[i] = createBucket();
         }
-        this.loadFactor = loadFactor;
         this.size = 0;
     }
 
@@ -80,6 +81,28 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
         return new LinkedList<>();
     }
 
+    private int getBucketIndex(K key) {
+        if (key == null) {
+            return 0;
+        }
+        return Math.floorMod(key.hashCode(), buckets.length);
+    }
+
+    private void resize() {
+        capacity *= 2;
+        Collection<Node>[] newBuckets = new Collection[capacity];
+        for (int i = 0; i < newBuckets.length; i++) {
+            newBuckets[i] = createBucket();
+        }
+        for (Collection<Node> bucket : buckets) {
+            for (Node node : bucket) {
+                int newIndex = getBucketIndex(node.key);
+                newBuckets[newIndex].add(node);
+            }
+        }
+        buckets = newBuckets;
+    }
+
     /**
      * Associates the specified value with the specified key in this map.
      * If the map already contains the specified key, replaces the key's mapping
@@ -90,7 +113,19 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
      */
     @Override
     public void put(K key, V value) {
-        throw new UnsupportedOperationException();
+        if ((size + 1) / (double) capacity > loadFactor) {
+            resize();
+        }
+        Node node = new Node(key, value);
+        int index = getBucketIndex(key);
+        for (Node n : buckets[index]) {
+            if (n.key.equals(key)) {
+                return;
+            }
+        }
+        boolean add = buckets[index].add(node);
+//        System.out.println(add);
+        size++;
     }
 
     /**
@@ -101,6 +136,15 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
      */
     @Override
     public V get(K key) {
+        int index = getBucketIndex(key);
+        if (index >= buckets.length) {
+            return null;
+        }
+        for (Node node : buckets[index]) {
+            if (node.key == key) {
+                return node.value;
+            }
+        }
         return null;
     }
 
@@ -111,7 +155,17 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
      */
     @Override
     public boolean containsKey(K key) {
-        return false;
+        int index = getBucketIndex(key);
+        if (index >= buckets.length) {
+            return false;
+        }
+        boolean isContained = false;
+        for (Node node : buckets[index]) {
+            if (node.key == key) {
+                isContained = true;
+            }
+        }
+        return isContained;
     }
 
     /**
@@ -119,7 +173,7 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
      */
     @Override
     public int size() {
-        return 0;
+        return this.size;
     }
 
     /**
@@ -127,7 +181,12 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
      */
     @Override
     public void clear() {
-        throw new UnsupportedOperationException();
+        for (Collection<Node> bucket : buckets) {
+            if (bucket != null) {
+                bucket.clear();
+            }
+        }
+        this.size = 0;
     }
 
     /**
@@ -136,7 +195,7 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
      */
     @Override
     public Set<K> keySet() {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     /**
@@ -149,7 +208,7 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
      */
     @Override
     public V remove(K key) {
-        return null;
+       throw new UnsupportedOperationException();
     }
 
     /**
@@ -159,7 +218,7 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
      */
     @Override
     public Iterator<K> iterator() {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
 }
