@@ -159,7 +159,7 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
         }
         boolean isContained = false;
         for (Node node : buckets[index]) {
-            if (node.key == key) {
+            if (node.key.equals(key)) {
                 isContained = true;
             }
         }
