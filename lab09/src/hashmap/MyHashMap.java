@@ -120,11 +120,12 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
         int index = getBucketIndex(key);
         for (Node n : buckets[index]) {
             if (n.key.equals(key)) {
+                n.value = value;
                 return;
             }
         }
         boolean add = buckets[index].add(node);
-//        System.out.println(add);
+//        System.out.println(value);
         size++;
     }
 
@@ -137,11 +138,8 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
     @Override
     public V get(K key) {
         int index = getBucketIndex(key);
-        if (index >= buckets.length) {
-            return null;
-        }
         for (Node node : buckets[index]) {
-            if (node.key == key) {
+            if (node.key.equals(key)) {
                 return node.value;
             }
         }
